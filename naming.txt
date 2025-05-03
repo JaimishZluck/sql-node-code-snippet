@@ -1,0 +1,21 @@
+For file name - small case with dot separated Example - filename.controller.txt, filename.service.txt, filename.model.txt, filename.routes.txt, filename.middleware.txt, filename.validator.txt, filename.helper.txt, filename.interface.txt, filename.enum.txt, filename.dto.txt, filename.module.txt, filename.decorator.txt, filename.filter.txt, filename.guard.txt, filename.interceptor.txt, filename.pipe.txt, filename.provider.txt, filename.resolver.txt, filename.subscriber.txt, filename.entity.txt, filename.repository.txt, filename.service.txt, filename.controller.txt, filename.middleware.txt, filename.validator.txt, filename.helper.txt, filename.interface.txt, filename.enum.txt, filename.dto.txt
+
+
+
+For folder name - all small case only Example - controller, service, model, routes, middleware, validator, helper, interface, enum, dto, module, decorator, filter, guard, interceptor, pipe, provider, resolver, subscriber, entity, repository, service, controller, middleware, validator, helper, interface, enum, dto
+
+
+
+For class name - PascalCase Example - FilenameController, FilenameService, FilenameModel, FilenameRoutes, FilenameMiddleware, FilenameValidator, FilenameHelper, FilenameInterface, FilenameEnum, FilenameDto, FilenameModule, FilenameDecorator, FilenameFilter, FilenameGuard, FilenameInterceptor, FilenamePipe, FilenameProvider, FilenameResolver, FilenameSubscriber, FilenameEntity, FilenameRepository, FilenameService, FilenameController, FilenameMiddleware, FilenameValidator, FilenameHelper, FilenameInterface, FilenameEnum, FilenameDto
+
+
+For variable name - camelCase Example - filenameController, filenameService, filenameModel, filenameRoutes, filenameMiddleware, filenameValidator, filenameHelper, filenameInterface, filenameEnum, filenameDto, filenameModule, filenameDecorator, filenameFilter, filenameGuard, filenameInterceptor, filenamePipe, filenameProvider, filenameResolver, filenameSubscriber, filenameEntity, filenameRepository, filenameService, filenameController, filenameMiddleware, filenameValidator, filenameHelper, filenameInterface, filenameEnum, filenameDto
+
+
+For CONSTANT or ENVIRONMENT VARIABLE name - UPPER_CASE Example - FILENAME_CONTROLLER, FILENAME_SERVICE, FILENAME_MODEL, FILENAME_ROUTES, FILENAME_MIDDLEWARE, FILENAME_VALIDATOR, FILENAME_HELPER, FILENAME_INTERFACE, FILENAME_ENUM, FILENAME_DTO, FILENAME_MODULE, FILENAME_DECORATOR, FILENAME_FILTER, FILENAME_GUARD, FILENAME_INTERCEPTOR, FILENAME_PIPE, FILENAME_PROVIDER, FILENAME_RESOLVER, FILENAME_SUBSCRIBER, FILENAME_ENTITY, FILENAME_REPOSITORY, FILENAME
+
+
+For function name - camelCase Example - filenameController, filenameService, filenameModel, filenameRoutes, filenameMiddleware, filenameValidator, filenameHelper, filenameInterface, filenameEnum, filenameDto, filenameModule, filenameDecorator, filenameFilter, filenameGuard, filenameInterceptor, filenamePipe, filenameProvider, filenameResolver, filenameSubscriber, filenameEntity, filenameRepository, filenameService, filenameController, filenameMiddleware, filenameValidator, filenameHelper, filenameInterface, filenameEnum, filenameDto
+
+
+

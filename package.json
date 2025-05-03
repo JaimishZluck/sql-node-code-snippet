@@ -1,0 +1,32 @@
+{
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev" : "nodemon -r dotenv/config --experimental-json-modules --inspect=0000 src/index.js"
+  },
+  "author": "anvtech.co",
+  "license": "ISC",
+  "dependencies": {
+    "@sequelize/core": "^7.0.0-alpha.41",
+    "@sequelize/mssql": "^7.0.0-alpha.41",
+    "boxen": "^8.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "figlet": "^1.8.0",
+    "joi": "^17.13.3",
+    "morgan": "^1.10.0",
+    "mssql": "^11.0.1",
+    "multer": "^1.4.5-lts.1",
+    "sequelize": "^6.37.3",
+    "sequelize-auto": "^0.8.8",
+    "winston": "^3.14.2",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "sequelize-cli": "^6.6.2"
+  }
+}
