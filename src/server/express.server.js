@@ -32,6 +32,22 @@ app.use(morganMiddleware);
 app.use(verifyUser);
 // Define routes
 app.use("/LMS/api/v2", router);
+app.get("project-name/v1/health", (req, res) => {
+  const healthCheck = {
+    status: "UP",
+    uptime: formatUptime(process.uptime()),
+    environment: process.env.NODE_ENV,
+    os: os.platform(),
+    startTime: serverStartTime.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour12: false,
+    }),
+    system: os.cpus()[0].model,
+  };
+
+  res.status(200).json(new ApiResponse(200, healthCheck, "project-name Backend is healthy"));
+});
+
 
 // Root route
 app.get("/", (req, res) => {
