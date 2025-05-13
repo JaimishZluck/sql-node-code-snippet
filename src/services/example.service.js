@@ -1,4 +1,4 @@
-import { Name } from '../models/name.model.js';
+import { Name } from '../models/example.model.js';
 import logger from '../logger/winston.logger.js';
 import { createdata } from '../db/operations.db.js';
 import { sequelize } from '../db/connection.db.js';

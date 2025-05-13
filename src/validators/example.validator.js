@@ -26,5 +26,18 @@ export const nameValidator = joi.object({
   })
 });
 
+export const queryValidator = joi.object({
+  page: joi.number().min(1).default(1).messages({
+    'number.base': 'Page must be a number',
+    'number.min': 'Page must be greater than 0'
+  }),
+  limit: joi.number().min(1).max(100).default(10).messages({
+    'number.base': 'Limit must be a number',
+    'number.min': 'Limit must be greater than 0',
+    'number.max': 'Limit cannot exceed 100'
+  }),
+  search: joi.string().allow('').optional()
+});
+
 
 

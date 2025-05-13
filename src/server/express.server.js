@@ -1,6 +1,7 @@
 import { createServer } from 'http';
 import { errorHandler } from '../middlewares/error.middleware.js';
 import { verifyUser } from '../middlewares/auth.middleware.js';
+import correlationIds from "../logger/correlation.logger.js";
 import morganMiddleware from '../logger/morgan.logger.js';
 import figlet from 'figlet';
 import router from '../routes/routes.js';
@@ -9,7 +10,10 @@ import cors from "cors";
 import boxen from "boxen";
 const app = express();
 
-// Apply CORS middleware first
+// Add correlation ID middleware first to ensure all subsequent middleware have access to it
+app.use(correlationIds.middleware);
+
+// Apply CORS middleware
 app.use(
   cors({
     origin:
@@ -26,10 +30,9 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(morganMiddleware);
 
-
 // auth
-
 app.use(verifyUser);
+
 // Define routes
 app.use("/LMS/api/v2", router);
 app.get("project-name/v1/health", (req, res) => {
@@ -47,7 +50,6 @@ app.get("project-name/v1/health", (req, res) => {
 
   res.status(200).json(new ApiResponse(200, healthCheck, "project-name Backend is healthy"));
 });
-
 
 // Root route
 app.get("/", (req, res) => {
