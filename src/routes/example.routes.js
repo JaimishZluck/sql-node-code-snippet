@@ -12,12 +12,12 @@ import { nameValidator, queryValidator } from '../validators/example.validator.j
 
 router.route('/example')
     .post(
-        validate(nameValidator, 'body'),
-        upload.any(), 
+        validate({ body: nameValidator }),
+        upload.any(),
         ControllerAsyncFunction1
     )
     .get(
-        validate(queryValidator, 'query'),
+        validate({ body: nameValidator }),
         ControllerAsyncFunction1
     );
 
