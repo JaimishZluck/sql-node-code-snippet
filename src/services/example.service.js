@@ -1,23 +1,25 @@
-import { Name } from '../models/example.model.js';
+// Import your models here
+// import { YourModel } from '../models/example.model.js';
 import logger from '../logger/winston.logger.js';
 import { createdata } from '../db/operations.db.js';
 import { sequelize } from '../db/connection.db.js';
 import { ApiError } from '../utils/apiError.util.js';
 
-const serviceAsyncFucntion1 = async (body) => {
-    const transaction = await sequelize.transaction(); // Start a transaction
-    try {
-        logger.info("serviceAsyncFucntion1: Creating data");
-        await createdata(Name, body, transaction);
-        await transaction.commit(); // Commit the transaction
+// Define your service functions below
+// Example:
+// const createItem = async (body) => {
+//     const transaction = await sequelize.transaction();
+//     try {
+//         logger.info("createItem: Creating data");
+//         await createdata(YourModel, body, transaction);
+//         await transaction.commit();
+//         logger.info("createItem: Data created successfully");
+//         return true;
+//     } catch (error) {
+//         logger.error(`createItem: Error occurred - ${error.message}`);
+//         await transaction.rollback();
+//         throw error instanceof ApiError ? error : new ApiError(500, "Internal Server Error", [error], error.stack);
+//     }
+// };
 
-        logger.info("serviceAsyncFucntion1: Data created successfully");
-        return true; // Return success response
-    } catch (error) {
-        logger.error(`serviceAsyncFucntion1: Error occurred - ${error.message}`);
-        await transaction.rollback(); // Rollback the transaction
-        throw error instanceof ApiError ? error : new ApiError(500, "Internal Server Error", [ error ], error.stack); // Wrap other errors in ApiError
-    }
-};
-
-export { serviceAsyncFucntion1 };
+// export { createItem };

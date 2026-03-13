@@ -1,25 +1,28 @@
 import express from 'express';
 import logger from '../logger/winston.logger.js';
 const router = express.Router();
-import { ControllerAsyncFunction1 } from '../controllers/example.controller.js';
-import { upload } from '../middlewares/multer.middleware.js';
-import { validate } from '../middlewares/validation.middleware.js';
-import { nameValidator, queryValidator } from '../validators/example.validator.js';
+// Import your controllers, middlewares, and validators here
+// import { yourController } from '../controllers/example.controller.js';
+// import { upload } from '../middlewares/multer.middleware.js';
+// import { validate } from '../middlewares/validation.middleware.js';
+// import { yourValidator } from '../validators/example.validator.js';
 
 /**
  * @swagger
  */
 
-router.route('/example')
-    .post(
-        validate({ body: nameValidator }),
-        upload.any(),
-        ControllerAsyncFunction1
-    )
-    .get(
-        validate({ body: nameValidator }),
-        ControllerAsyncFunction1
-    );
+// Define your routes below
+// Example:
+// router.route('/your-resource')
+//     .post(
+//         validate({ body: yourValidator }),
+//         upload.any(),
+//         yourController
+//     )
+//     .get(
+//         validate({ query: queryValidator }),
+//         yourController
+//     );
 
 export default router;
 

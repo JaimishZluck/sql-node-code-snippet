@@ -1,27 +1,22 @@
 import { sequelize } from "../db/connection.db.js";
 import Sequelize from "sequelize";
 
-const Name = sequelize.define("user", {
-    id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
-    },
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
-    email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-    }
-},
-    {
-        tableName: "somethingName",
-        freezeTableName: true, // this will preven thenaem to becoime the model names plural form of the table name
-        timestamps: true,
-        createdAt: "created_at",
-        updatedAt: "updated_at",
-    });
+// Define your model below
+// Example:
+// const YourModel = sequelize.define("your_model", {
+//     id: {
+//         type: Sequelize.UUID,
+//         defaultValue: Sequelize.UUIDV4,
+//         primaryKey: true,
+//     },
+//     // Add your columns here
+// },
+// {
+//     tableName: "your_table_name",
+//     freezeTableName: true,
+//     timestamps: true,
+//     createdAt: "created_at",
+//     updatedAt: "updated_at",
+// });
 
-export { Name };
+// export { YourModel };
