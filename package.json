@@ -1,34 +1,42 @@
 {
+  "name": "base-backend-architecture-template",
+  "version": "1.0.0",
+  "description": "Reusable backend architecture starter template with JWT auth, standardized utilities, and documentation.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r dotenv/config --experimental-json-modules --inspect=0000 src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "anvtech.co",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.41",
     "@sequelize/mssql": "^7.0.0-alpha.41",
+    "axios": "^1.7.9",
     "boxen": "^8.0.1",
     "cls-hooked": "^4.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
-    "figlet": "^1.8.0",
+    "helmet": "^8.0.0",
     "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mssql": "^11.0.1",
     "multer": "^1.4.5-lts.1",
     "os-utils": "^0.0.14",
     "sequelize": "^6.37.3",
     "sequelize-auto": "^0.8.8",
+    "socket.io": "^4.8.1",
     "uuid": "^11.1.0",
     "winston": "^3.14.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "eslint": "^9.18.0",
     "nodemon": "^3.1.4",
     "sequelize-cli": "^6.6.2"
   }

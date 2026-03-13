@@ -1,60 +1,78 @@
-import { createServer } from 'http';
-import { errorHandler } from '../middlewares/error.middleware.js';
-import { verifyUser } from '../middlewares/auth.middleware.js';
-import correlationIds from "../logger/correlation.logger.js";
-import morganMiddleware from '../logger/morgan.logger.js';
-import figlet from 'figlet';
-import router from '../routes/routes.js';
+import { createServer } from "http";
+import os from "os";
 import express from "express";
 import cors from "cors";
-import boxen from "boxen";
+import helmet from "helmet";
+
+import config from "../config/env.config.js";
+import { errorHandler } from "../middlewares/error.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { requestIdMiddleware } from "../middlewares/requestId.middleware.js";
+import correlationIds from "../logger/correlation.logger.js";
+import morganMiddleware from "../logger/morgan.logger.js";
+import { ApiResponse } from "../utils/apiResponse.util.js";
+import router from "../routes/example.routes.js";
+import logger from "../logger/winston.logger.js";
+
 const app = express();
 
-// Add correlation ID middleware first to ensure all subsequent middleware have access to it
-app.use(correlationIds.middleware);
+const registerMiddlewares = () => {
+  // Request/trace identifiers
+  app.use(requestIdMiddleware);
+  app.use(correlationIds.middleware);
 
-// Apply CORS middleware
-app.use(
-  cors({
-    origin:
-      process.env.CORS_ORIGIN === "*"
-        ? "*"
-        : process.env.CORS_ORIGIN?.split(","),
-    credentials: true,
-  })
-);
+  // Security headers
+  app.use(helmet());
 
-// Apply other middlewares
-app.use(express.json({ limit: "16kb" }));
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-app.use(express.static("public"));
-app.use(morganMiddleware);
+  // CORS middleware
+  app.use(
+    cors({
+      origin:
+        config.corsOrigin === "*"
+          ? "*"
+          : config.corsOrigin.split(",").map((o) => o.trim()),
+      credentials: true,
+    })
+  );
 
-// auth
-app.use(verifyUser);
+  // Body parsing, static files, and HTTP logging
+  app.use(express.json({ limit: "16kb" }));
+  app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+  app.use(express.static("public"));
+  app.use(morganMiddleware);
 
-// Define routes
-app.use("/LMS/api/v2", router);
-app.get("project-name/v1/health", (req, res) => {
-  const healthCheck = {
-    status: "UP",
-    uptime: formatUptime(process.uptime()),
-    environment: process.env.NODE_ENV,
-    os: os.platform(),
-    startTime: serverStartTime.toLocaleString("en-IN", {
-      timeZone: "Asia/Kolkata",
-      hour12: false,
-    }),
-    system: os.cpus()[0].model,
-  };
+  // TODO(project-setup): configure project specific middlewares.
 
-  res.status(200).json(new ApiResponse(200, healthCheck, "project-name Backend is healthy"));
-});
+  // Authentication
+  // TODO(project-setup): configure authentication strategy.
+  app.use(verifyJWT());
+};
 
-// Root route
-app.get("/", (req, res) => {
-  res.send(`Welcome to App ${process.env.APP}`);
-});
+const registerRoutes = () => {
+  // Base API routes
+  // TODO(project-setup): update base API prefix according to the new project name.
+  app.use(config.api.basePrefix, router);
+
+  // Health check route
+  app.get("/health", (req, res) => {
+    const healthCheck = {
+      status: "UP",
+      uptime: process.uptime(),
+      environment: config.env,
+      host: os.hostname(),
+      platform: os.platform(),
+    };
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, healthCheck, "Backend service is healthy"));
+  });
+
+  // Root route
+  app.get("/", (req, res) => {
+    res.send(`Welcome to ${config.appName}`);
+  });
+};
 
 const httpServer = createServer(app);
 
@@ -62,44 +80,15 @@ const httpServer = createServer(app);
 app.use(errorHandler);
 
 const startServer = () => {
-  const port = process.env.PORT || 8080;
-  const server = process.env.SERVER || "localhost";
+  registerMiddlewares();
+  registerRoutes();
 
-  httpServer.listen(port, server, () => {
-    const url = `http://${server}:${port}`;
-    const message = `Server is running on ${url}`;
+  const port = config.port;
+  const host = config.serverHost;
 
-    // Calculate dynamic left padding for centering
-    const terminalWidth = process.stdout.columns || 80;
-    const boxWidth = message.length + 8; // Adjust for box padding and borders
-    const leftPadding = Math.max(0, Math.floor((terminalWidth - boxWidth) / 2));
-
-    const box = boxen(message, {
-      padding: { top: 2, bottom: 2, left: 2, right: 2 },
-      margin: { top: 1, bottom: 1, left: leftPadding, right: 0 },
-      borderStyle: "round",
-      borderColor: "blue",
-      title: "L M S",
-      titleAlignment: "center",
-    });
-
-    console.log(box);
-
-    figlet("L M  S ! !", (err, data) => {
-      if (err) {
-        console.error("Something went wrong with figlet");
-        return;
-      }
-
-      // Center the figlet output
-      const terminalWidth = process.stdout.columns || 80;
-      const lines = data.split("\n");
-      const centeredFiglet = lines
-        .map(line => line.padStart(Math.floor((terminalWidth + line.length) / 2)))
-        .join("\n");
-
-      console.log(centeredFiglet);
-    });
+  httpServer.listen(port, host, () => {
+    const url = `http://${host}:${port}`;
+    logger.info(`HTTP server listening at ${url}`);
   });
 };
 
