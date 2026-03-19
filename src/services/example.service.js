@@ -1,9 +1,5 @@
 // Import your models here
 // import { YourModel } from '../models/example.model.js';
-import logger from '../logger/winston.logger.js';
-import { createdata } from '../db/operations.db.js';
-import { sequelize } from '../db/connection.db.js';
-import { ApiError } from '../utils/apiError.util.js';
 
 // Define your service functions below
 // Example:
@@ -23,3 +19,25 @@ import { ApiError } from '../utils/apiError.util.js';
 // };
 
 // export { createItem };
+
+const getExampleStatus = async ({ includeUser, user }) => {
+    const shouldIncludeUser = includeUser === true || includeUser === 'true';
+
+    const data = {
+        service: 'example',
+        status: 'UP',
+        timestamp: new Date().toISOString(),
+        authenticated: true,
+    };
+
+    if (shouldIncludeUser) {
+        data.user = {
+            id: user?.id ?? null,
+            role: user?.role ?? null,
+        };
+    }
+
+    return data;
+};
+
+export { getExampleStatus };

@@ -1,7 +1,7 @@
 // Import your service functions here
 // import { yourServiceFunction } from '../services/example.service.js';
+import { getExampleStatus } from '../services/example.service.js';
 import { ApiResponse } from '../utils/apiResponse.util.js';
-import logger from '../logger/winston.logger.js';
 
 // Define your controller functions below
 // Example:
@@ -19,3 +19,20 @@ import logger from '../logger/winston.logger.js';
 // };
 
 // export { createItem };
+
+const getStatus = async (req, res, next) => {
+    try {
+        const data = await getExampleStatus({
+            includeUser: req.query.includeUser,
+            user: req.user,
+        });
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, data, 'Example API is working'));
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export { getStatus };

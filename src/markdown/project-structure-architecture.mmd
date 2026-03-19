@@ -1,0 +1,101 @@
+flowchart TB
+    %% High-level structure + architecture
+    Root["micro-services-arch/"]
+
+    subgraph TopLevel["Top-level"]
+        naming["naming.txt"]
+        pkg["package.json"]
+        readme["README.md"]
+        public["public/"]
+        scripts["scripts/"]
+        src["src/"]
+    end
+
+    Root --> naming
+    Root --> pkg
+    Root --> readme
+    Root --> public
+    Root --> scripts
+    Root --> src
+
+    subgraph PublicDir["public/"]
+        pFiles["files/"]
+        pImages["images/"]
+        pTemplates["templates/"]
+    end
+    public --> pFiles
+    public --> pImages
+    public --> pTemplates
+
+    subgraph ScriptsDir["scripts/"]
+        hooks["hooks/"]
+        pretool["guard-pretooluse.js"]
+    end
+    scripts --> hooks
+    hooks --> pretool
+
+    subgraph SrcDirs["src/"]
+        index["index.js"]
+        common["common/"]
+        config["config/"]
+        controllers["controllers/"]
+        db["db/"]
+        logger["logger/"]
+        markdown["markdown/"]
+        middlewares["middlewares/"]
+        models["models/"]
+        routes["routes/"]
+        server["server/"]
+        services["services/"]
+        utils["utils/"]
+        validators["validators/"]
+    end
+
+    src --> index
+    src --> common
+    src --> config
+    src --> controllers
+    src --> db
+    src --> logger
+    src --> markdown
+    src --> middlewares
+    src --> models
+    src --> routes
+    src --> server
+    src --> services
+    src --> utils
+    src --> validators
+
+    subgraph RuntimeFlow["Runtime Architecture (Route -> Controller -> Service -> Utils)"]
+        client["Client"]
+        express["Express App / API Prefix"]
+        routeLayer["Route Layer"]
+        authMw["Auth / Validation Middleware"]
+        controllerLayer["Controller Layer"]
+        serviceLayer["Service Layer"]
+        utilLayer["Utils / DB Helpers"]
+        dbLayer["Database"]
+        success["ApiResponse"]
+        failure["ApiError -> Error Middleware"]
+    end
+
+    client --> express
+    express --> routeLayer
+    routeLayer --> authMw
+    authMw --> controllerLayer
+    controllerLayer --> serviceLayer
+    serviceLayer --> utilLayer
+    utilLayer --> dbLayer
+    controllerLayer --> success
+    routeLayer --> failure
+    controllerLayer --> failure
+    serviceLayer --> failure
+
+    routes -. implements .-> routeLayer
+    controllers -. implements .-> controllerLayer
+    services -. implements .-> serviceLayer
+    utils -. provides .-> utilLayer
+    middlewares -. cross-cutting .-> authMw
+    middlewares -. handles .-> failure
+    validators -. request schemas .-> authMw
+    db -. persistence .-> dbLayer

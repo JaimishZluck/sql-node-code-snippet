@@ -1,5 +1,8 @@
 import express from 'express';
-import logger from '../logger/winston.logger.js';
+import { getStatus } from '../controllers/example.controller.js';
+import { validate } from '../middlewares/validation.middleware.js';
+import { statusQueryValidator } from '../validators/example.validator.js';
+
 const router = express.Router();
 // Import your controllers, middlewares, and validators here
 // import { yourController } from '../controllers/example.controller.js';
@@ -23,6 +26,8 @@ const router = express.Router();
 //         validate({ query: queryValidator }),
 //         yourController
 //     );
+
+router.get('/status', validate({ query: statusQueryValidator }), getStatus);
 
 export default router;
 

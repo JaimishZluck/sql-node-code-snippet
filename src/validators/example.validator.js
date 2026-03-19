@@ -22,3 +22,9 @@ export const queryValidator = joi.object({
   search: joi.string().allow('').optional()
 });
 
+export const statusQueryValidator = joi.object({
+  includeUser: joi.boolean().default(false).messages({
+    'boolean.base': 'includeUser must be a boolean'
+  })
+});
+
