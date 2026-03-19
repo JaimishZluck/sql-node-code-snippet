@@ -5,9 +5,12 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js",
+    "dev": "nodemon --inspect=9229 src/index.js",
+    "dev:simple": "nodemon src/index.js",
     "start": "node src/index.js",
+    "start:inspect": "node --inspect=9229 src/index.js",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
