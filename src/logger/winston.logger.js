@@ -44,12 +44,22 @@ const consoleFormat = winston.format.combine(
   winston.format.printf((info) => {
     const { timestamp, level, message, ...metadata } = info;
     const correlationId = correlationIds.get() || 'NO_CORRELATION_ID';
-    const filteredMetadata = Object.fromEntries(
-      Object.entries(metadata).filter(([ key ]) => !key.startsWith('Symbol('))
-    );
 
-    const metadataString = Object.keys(filteredMetadata).length > 0
-      ? `\n${util.inspect(filteredMetadata, { colors: true, depth: null })}`
+    // Filter metadata: only keep safe, defined fields
+    const safeFields = {};
+    const allowedKeys = ['method', 'url', 'status', 'ip', 'user', 'file', 'line', 'column', 'function', 'error', 'code'];
+
+    for (const [key, value] of Object.entries(metadata)) {
+      // Skip Symbol properties and undefined values
+      if (!key.startsWith('Symbol(') && value !== undefined && value !== null) {
+        if (allowedKeys.includes(key) || (typeof value === 'string' && value.length < 500)) {
+          safeFields[key] = value;
+        }
+      }
+    }
+
+    const metadataString = Object.keys(safeFields).length > 0
+      ? `\n${util.inspect(safeFields, { colors: true, depth: 2 })}`
       : "";
 
     return `[${timestamp}] [${correlationId}] ${level}: ${message}${metadataString}`;
@@ -64,12 +74,22 @@ const fileFormat = winston.format.combine(
   winston.format.printf((info) => {
     const { timestamp, level, message, ...metadata } = info;
     const correlationId = correlationIds.get() || 'NO_CORRELATION_ID';
-    const filteredMetadata = Object.fromEntries(
-      Object.entries(metadata).filter(([ key ]) => !key.startsWith('Symbol('))
-    );
 
-    const metadataString = Object.keys(filteredMetadata).length > 0
-      ? `\n${JSON.stringify(filteredMetadata, null, 2)}`
+    // Filter metadata: only keep safe, defined fields
+    const safeFields = {};
+    const allowedKeys = ['method', 'url', 'status', 'ip', 'user', 'file', 'line', 'column', 'function', 'error', 'code'];
+
+    for (const [key, value] of Object.entries(metadata)) {
+      // Skip Symbol properties and undefined values
+      if (!key.startsWith('Symbol(') && value !== undefined && value !== null) {
+        if (allowedKeys.includes(key) || (typeof value === 'string' && value.length < 500)) {
+          safeFields[key] = value;
+        }
+      }
+    }
+
+    const metadataString = Object.keys(safeFields).length > 0
+      ? `\n${JSON.stringify(safeFields, null, 2)}`
       : "";
 
     return `[${timestamp}] [${correlationId}] ${level}: ${message}${metadataString}`;
