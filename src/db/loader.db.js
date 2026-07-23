@@ -1,12 +1,16 @@
 import { sequelize } from "./connection.db.js";
+import models from "../models/index.js";
+import logger from "../logger/winston.logger.js";
 
 const connectDB = async () => {
   try {
     await sequelize.authenticate();
+    void models;
     // await sequelize.sync();
-    console.log("Connection has been established successfully."); //REMOVE THIS 
+    logger.info("Connection has been established successfully.");
   } catch (error) {
-    console.error("Unable to connect to the database:", error); //REMOVE THIS AND REPALCE BY THER LOGGER
+    logger.error("Unable to connect to the database:", { error: error?.message, stack: error?.stack });
+    throw error;
   }
 };
 

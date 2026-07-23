@@ -1,10 +1,4 @@
-import dotenv from "dotenv";
 import Joi from "joi";
-
-// Load environment variables from .env file.
-dotenv.config({
-  path: "./.env",
-});
 
 const envSchema = Joi.object({
   NODE_ENV: Joi.string()
@@ -14,6 +8,8 @@ const envSchema = Joi.object({
   APP_NAME: Joi.string().default("BaseBackendService"),
   SERVER_HOST: Joi.string().hostname().default("localhost"),
   CORS_ORIGIN: Joi.string().default("*"),
+  RATE_LIMIT_WINDOW_MS: Joi.number().default(900000),
+  RATE_LIMIT_MAX: Joi.number().default(100),
 
   DB_NAME: Joi.string().allow("").optional(),
   DB_USERNAME: Joi.string().allow("").optional(),
@@ -66,6 +62,10 @@ const config = {
   redisUrl: env.REDIS_URL,
   socket: {
     path: env.SOCKET_IO_PATH,
+  },
+  rateLimit: {
+    windowMs: env.RATE_LIMIT_WINDOW_MS,
+    max: env.RATE_LIMIT_MAX,
   },
   api: {
     basePrefix: env.API_BASE_PREFIX,

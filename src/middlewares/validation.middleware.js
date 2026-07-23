@@ -1,6 +1,7 @@
 // middleware/validation.middleware.js
 import logger from "../logger/winston.logger.js";
 import { ValidationError } from "../utils/validationError.util.js";
+import { ApiResponse } from "../utils/apiResponse.util.js";
 
 export const validate = (schemas) => {
   return async (req, res, next) => {
@@ -15,13 +16,10 @@ export const validate = (schemas) => {
         const { error } = schema.validate(data, { abortEarly: false });
 
         if (error) {
-          console.error(
-            "Validation Error:",
-            error.details.map((err) => err.message)
-          );
+          logger.error("Validation Error:", { errors: error.details.map((err) => err.message) });
           throw new ValidationError(
             error.details[0].message,
-            error.details.map((err) => err.message) 
+            error.details.map((err) => err.message)
           );
         }
       }
@@ -30,11 +28,9 @@ export const validate = (schemas) => {
       next();
     } catch (error) {
       if (error instanceof ValidationError) {
-        return res.status(400).json({
-          success: false,
-          message: error.message,
-          errors: error.errors,
-        });
+        return res.status(400).json(
+          new ApiResponse(400, { errors: error.errors }, error.message)
+        );
       }
       next(error);
     }

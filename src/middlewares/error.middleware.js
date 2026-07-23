@@ -1,6 +1,7 @@
 import logger from "../logger/winston.logger.js";
 import { ApiError } from "../utils/apiError.util.js";
 import { ValidationError } from "../utils/validationError.util.js";
+import { ApiResponse } from "../utils/apiResponse.util.js";
 import { getRootCause } from "../utils/stackTraceParser.util.js";
 import { Sequelize } from "sequelize";
 import multer from "multer";
@@ -33,17 +34,14 @@ const errorHandler = (err, req, res, next) => {
   // Get root cause from stack trace (user code only, filters node_modules)
   const rootCause = getRootCause(error.stack || error);
 
-  // Build response - include devInfo only in development
-  const response = {
-    success: false,
-    statusCode: error.statusCode,
-    message: error.message,
+  // Build response data - include devInfo only in development
+  const responseData = {
     errors: error.errors || []
   };
 
   // Add devInfo only in development mode
   if (process.env.NODE_ENV === "development") {
-    response.devInfo = {
+    responseData.devInfo = {
       file: rootCause.file,
       line: rootCause.line,
       column: rootCause.column,
@@ -74,7 +72,9 @@ const errorHandler = (err, req, res, next) => {
 
   logger.error(`${error.message}`, safeLogMeta);
 
-  return res.status(error.statusCode).json(response);
+  return res
+    .status(error.statusCode)
+    .json(new ApiResponse(error.statusCode, responseData, error.message));
 };
 
 /**

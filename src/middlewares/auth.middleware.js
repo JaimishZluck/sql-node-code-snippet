@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import logger from "../logger/winston.logger.js";
 import config from "../config/env.config.js";
+import { ApiResponse } from "../utils/apiResponse.util.js";
 
 // Utility function to create a JWT access token.
 // TODO(project-setup): adjust payload and signing options for your auth model.
@@ -16,47 +17,42 @@ export const generateAccessToken = (payload, options = {}) => {
 //   router.get("/secure-endpoint", verifyJWT(["admin"]), controller);
 export const verifyJWT =
   (requiredRoles = []) =>
-  (req, res, next) => {
-    try {
-      const authHeader = req.headers["authorization"] || "";
-      const token = authHeader.startsWith("Bearer ")
-        ? authHeader.slice(7)
-        : null;
+    (req, res, next) => {
+      try {
+        const authHeader = req.headers["authorization"] || "";
+        const token = authHeader.startsWith("Bearer ")
+          ? authHeader.slice(7)
+          : null;
 
-      if (!token) {
-        logger.warn("verifyJWT: Missing Authorization header");
-        return res.status(401).json({
-          success: false,
-          message: "Authentication token missing",
-        });
+        if (!token) {
+          logger.warn("verifyJWT: Missing Authorization header");
+          return res.status(401).json(new ApiResponse(401, null, "Authentication token missing"));
+        }
+
+        const decoded = jwt.verify(token, config.jwt.secret);
+        req.user = decoded;
+
+        // Basic role-based access control placeholder.
+        // TODO(project-setup): define user roles and permissions according to your domain model.
+        if (
+          Array.isArray(requiredRoles) &&
+          requiredRoles.length > 0 &&
+          !requiredRoles.includes(decoded.role)
+        ) {
+          logger.warn(
+            `verifyJWT: Access denied for user with role "${decoded.role}"`
+          );
+          return res.status(403).json(
+            new ApiResponse(403, null, "Insufficient permissions to access this resource")
+          );
+        }
+
+        return next();
+      } catch (error) {
+        logger.error(`verifyJWT: Token verification failed - ${error.message}`);
+        return res
+          .status(401)
+          .json(new ApiResponse(401, null, "Invalid or expired authentication token"));
       }
-
-      const decoded = jwt.verify(token, config.jwt.secret);
-      req.user = decoded;
-
-      // Basic role-based access control placeholder.
-      // TODO(project-setup): define user roles and permissions according to your domain model.
-      if (
-        Array.isArray(requiredRoles) &&
-        requiredRoles.length > 0 &&
-        !requiredRoles.includes(decoded.role)
-      ) {
-        logger.warn(
-          `verifyJWT: Access denied for user with role "${decoded.role}"`
-        );
-        return res.status(403).json({
-          success: false,
-          message: "Insufficient permissions to access this resource",
-        });
-      }
-
-      return next();
-    } catch (error) {
-      logger.error(`verifyJWT: Token verification failed - ${error.message}`);
-      return res.status(401).json({
-        success: false,
-        message: "Invalid or expired authentication token",
-      });
-    }
-  };
+    };
 

@@ -1,14 +1,32 @@
 {
-  "name": "base-backend-architecture-template",
+  "name": "superman-framework",
   "version": "1.0.0",
   "description": "Reusable backend architecture starter template with JWT auth, standardized utilities, and documentation.",
   "main": "src/index.js",
   "type": "module",
+  "bin": {
+    "superman-framework": "./bin/create.js"
+  },
+  "files": [
+    "config",
+    "migrations",
+    "public",
+    "scripts",
+    "src",
+    "package.json",
+    ".gitignore",
+    "bin"
+  ],
   "scripts": {
-    "dev": "nodemon --inspect=9229 src/index.js",
-    "dev:simple": "nodemon src/index.js",
-    "start": "node src/index.js",
-    "start:inspect": "node --inspect=9229 src/index.js",
+    "dev": "nodemon --inspect=9229 -r dotenv/config src/index.js",
+    "dev:simple": "nodemon -r dotenv/config src/index.js",
+    "start": "node -r dotenv/config src/index.js",
+    "start:inspect": "node --inspect=9229 -r dotenv/config src/index.js",
+    "create": "node ./bin/create.js",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "migrate:undo:all": "npx sequelize-cli db:migrate:undo:all",
+    "migrate:create": "npx sequelize-cli migration:generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,6 +42,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.4.0",
     "helmet": "^8.0.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",

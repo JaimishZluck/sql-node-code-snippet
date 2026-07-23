@@ -25,6 +25,7 @@
 import logger from '../logger/winston.logger.js';
 import { getExampleStatus } from '../services/example.service.js';
 import { ApiResponse } from '../utils/apiResponse.util.js';
+import fileCleanup from '../utils/fileCleanup.util.js';
 
 /**
  * Get service status
@@ -35,12 +36,11 @@ import { ApiResponse } from '../utils/apiResponse.util.js';
 const getStatus = async (req, res, next) => {
   try {
     logger.info('getStatus: Processing status request');
-
+    const { includeUser } = req.query
     const data = await getExampleStatus({
-      includeUser: req.query.includeUser,
+      includeUser: includeUser,
       user: req.user,
     });
-
     return res
       .status(200)
       .json(new ApiResponse(200, data, 'Example API is working'));
@@ -49,5 +49,38 @@ const getStatus = async (req, res, next) => {
     return next(error);
   }
 };
+/**
+ * Upload files handler
+ * Accepts any number of files via `upload.any()` middleware
+ */
+const uploadFiles = async (req, res, next) => {
+  const filePaths = Array.isArray(req.files) ? req.files.map(f => f.path) : [];
 
-export { getStatus };
+  try {
+    logger.info('uploadFiles: Received files', { count: filePaths.length });
+
+    // Business logic placeholder: process files as needed
+    const result = {
+      uploaded: (req.files || []).map((f) => ({ originalname: f.originalname, filename: f.filename, path: f.path, size: f.size }))
+    };
+
+    return res.status(200).json(new ApiResponse(200, result, 'Files processed successfully'));
+  } catch (error) {
+    logger.error('uploadFiles: Error processing files', { error: error?.message, stack: error?.stack });
+    return next(error);
+  } finally {
+    // Ensure uploaded files are cleaned up from disk
+    try {
+      if (filePaths.length > 0) {
+        await fileCleanup.deleteMultipleFiles(filePaths);
+        // Clear references on request object
+        req.files = [];
+        req.file = undefined;
+      }
+    } catch (cleanupErr) {
+      logger.error('uploadFiles: Cleanup failed', { error: cleanupErr?.message });
+    }
+  }
+};
+
+export { getStatus, uploadFiles };

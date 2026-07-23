@@ -1,24 +1,27 @@
 import logger from "../logger/winston.logger.js";
 
-// Factory-style model definition to avoid circular dependencies
-const ExampleModel = (sequelize, DataTypes) => {
-    logger.info("Initializing Example model");
+const OrderModel = (sequelize, DataTypes) => {
+    logger.info("Initializing Order model");
 
-    const Example = sequelize.define(
-        "Example",
+    const Order = sequelize.define(
+        "Order",
         {
             id: {
                 type: DataTypes.UUID,
                 defaultValue: DataTypes.UUIDV4,
                 primaryKey: true,
             },
-            name: {
+            order_name: {
                 type: DataTypes.STRING,
+                allowNull: false,
+            },
+            user_id: {
+                type: DataTypes.UUID,
                 allowNull: false,
             },
         },
         {
-            tableName: "examples",
+            tableName: "orders",
             freezeTableName: true,
             timestamps: true,
             createdAt: "created_at",
@@ -26,11 +29,13 @@ const ExampleModel = (sequelize, DataTypes) => {
         }
     );
 
-    Example.associate = (models) => {
-        // Define associations here when needed
+    Order.associate = (models) => {
+        Order.belongsTo(models.User, {
+            foreignKey: "user_id",
+        });
     };
 
-    return Example;
+    return Order;
 };
 
-export default ExampleModel;
+export default OrderModel;

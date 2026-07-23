@@ -12,14 +12,15 @@
 import { createServer } from "http";
 import os from "os";
 import express from "express";
-import cors from "cors";
 import helmet from "helmet";
 
 import connectDB from "./db/loader.db.js";
 import config from "./config/env.config.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { verifyJWT } from "./middlewares/auth.middleware.js";
+import { corsMiddleware } from "./middlewares/cors.middleware.js";
 import { requestIdMiddleware } from "./middlewares/requestId.middleware.js";
+import { rateLimitMiddleware } from "./middlewares/rateLimit.middleware.js";
 import correlationIds from "./logger/correlation.logger.js";
 import morganMiddleware from "./logger/morgan.logger.js";
 import { ApiResponse } from "./utils/apiResponse.util.js";
@@ -41,15 +42,10 @@ const registerMiddlewares = () => {
   app.use(helmet());
 
   // CORS middleware
-  app.use(
-    cors({
-      origin:
-        config.corsOrigin === "*"
-          ? "*"
-          : config.corsOrigin.split(",").map((o) => o.trim()),
-      credentials: true,
-    })
-  );
+  app.use(corsMiddleware);
+
+  // Rate limiting middleware
+  app.use(rateLimitMiddleware);
 
   // Body parsing, static files, and HTTP logging
   app.use(express.json({ limit: "16kb" }));
@@ -98,6 +94,7 @@ const httpServer = createServer(app);
 // Error handling middleware (must be registered last, after all routes)
 app.use(errorHandler);
 
+
 /**
  * Start HTTP server on configured port and host
  */
@@ -137,7 +134,7 @@ const startApp = async () => {
 try {
   await startApp();
 } catch (error) {
-  console.error("Failed to start application:", error);
+  logger.error("Failed to start application:", { error: error?.message, stack: error?.stack });
   process.exit(1);
 }
 
