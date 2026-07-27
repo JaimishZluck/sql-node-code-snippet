@@ -32,7 +32,7 @@
  */
 
 import logger from "../logger/winston.logger.js";
-import { ApiError } from "../utils/apiError.util.js";
+import { ApiError } from "../utils/apierror.util.js";
 // import { YourModel } from "../models/example.model.js"; // Uncomment when you create your models
 import { createdata, updateData, fetchSingleData, findAllData, deleteData, startTransaction } from "../db/operations.db.js";
 
@@ -55,14 +55,18 @@ const createItem = async (body, Model = null) => {
 
     session = await startTransaction();
     const result = await createdata(Model, body, session);
-    await session.commit();
+    await session.commitTransaction();
 
     logger.info("createItem: Item created successfully");
     return result;
 
   } catch (error) {
-    if (session) await session.abort();
+    if (session) await session.abortTransaction();
     throw error instanceof ApiError ? error : new ApiError(500, "Create item failed", [error.message], error.stack);
+  } finally {
+    if (session) {
+      await session.endSession();
+    }
   }
 };
 

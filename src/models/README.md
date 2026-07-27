@@ -1,3 +1,3 @@
-## Make a mdoel to map the sql table use sequelize.define and also use freezname for the tablename.
+## Create Mongoose schemas/models mapped to MongoDB collections.
 
-## Use logger from the logger/winston.logger.js and put log at every entry point of the function.
+## Use logger from `src/logger/winston.logger.js` and log model initialization.

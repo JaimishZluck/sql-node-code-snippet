@@ -1,41 +1,28 @@
 import logger from "../logger/winston.logger.js";
+import mongoose from "mongoose";
 
-const OrderModel = (sequelize, DataTypes) => {
-    logger.info("Initializing Order model");
+logger.info("Initializing Order model");
 
-    const Order = sequelize.define(
-        "Order",
-        {
-            id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-                primaryKey: true,
-            },
-            order_name: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            user_id: {
-                type: DataTypes.UUID,
-                allowNull: false,
-            },
-        },
-        {
-            tableName: "orders",
-            freezeTableName: true,
-            timestamps: true,
-            createdAt: "created_at",
-            updatedAt: "updated_at",
-        }
-    );
+const orderSchema = new mongoose.Schema(
+  {
+    order_name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  {
+    collection: "orders",
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+    versionKey: false,
+  }
+);
 
-    Order.associate = (models) => {
-        Order.belongsTo(models.User, {
-            foreignKey: "user_id",
-        });
-    };
+const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 
-    return Order;
-};
-
-export default OrderModel;
+export default Order;

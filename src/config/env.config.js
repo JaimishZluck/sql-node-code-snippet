@@ -11,10 +11,8 @@ const envSchema = Joi.object({
   RATE_LIMIT_WINDOW_MS: Joi.number().default(900000),
   RATE_LIMIT_MAX: Joi.number().default(100),
 
-  DB_NAME: Joi.string().allow("").optional(),
-  DB_USERNAME: Joi.string().allow("").optional(),
-  DB_PASSWORD: Joi.string().allow("").optional(),
-  DB_HOST: Joi.string().allow("").optional(),
+  MONGO_URI: Joi.string().uri().required(),
+  MONGO_DB_NAME: Joi.string().allow("").optional(),
 
   JWT_SECRET: Joi.string().min(8).required(),
   JWT_EXPIRY: Joi.string().default("1d"),
@@ -48,11 +46,8 @@ const config = {
   serverHost: env.SERVER_HOST,
   corsOrigin: env.CORS_ORIGIN,
   db: {
-    // TODO(project-setup): update database configuration as needed.
-    name: env.DB_NAME,
-    username: env.DB_USERNAME,
-    password: env.DB_PASSWORD,
-    host: env.DB_HOST,
+    uri: env.MONGO_URI,
+    name: env.MONGO_DB_NAME,
   },
   jwt: {
     secret: env.JWT_SECRET,
@@ -73,4 +68,3 @@ const config = {
 };
 
 export default config;
-

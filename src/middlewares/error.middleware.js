@@ -1,9 +1,9 @@
 import logger from "../logger/winston.logger.js";
-import { ApiError } from "../utils/apiError.util.js";
+import { ApiError } from "../utils/apierror.util.js";
 import { ValidationError } from "../utils/validationError.util.js";
 import { ApiResponse } from "../utils/apiResponse.util.js";
 import { getRootCause } from "../utils/stackTraceParser.util.js";
-import { Sequelize } from "sequelize";
+import mongoose from "mongoose";
 import multer from "multer";
 
 const errorHandler = (err, req, res, next) => {
@@ -19,9 +19,9 @@ const errorHandler = (err, req, res, next) => {
   else if (error instanceof ValidationError) {
     // Keep as-is
   }
-  // Handle Sequelize errors
-  else if (error instanceof Sequelize.BaseError) {
-    const dbError = transformSequelizeError(error);
+  // Handle Mongoose/MongoDB errors
+  else if (isMongooseOrMongoError(error)) {
+    const dbError = transformMongooseError(error);
     error = dbError;
   }
   // Handle other errors
@@ -78,37 +78,53 @@ const errorHandler = (err, req, res, next) => {
 };
 
 /**
- * Transform Sequelize errors to ApiError
+ * Transform Mongoose/MongoDB errors to ApiError
  */
-function transformSequelizeError(error) {
+function transformMongooseError(error) {
   let statusCode = 400;
   let message = "Database Error";
   let errors = [error.message];
 
-  if (error instanceof Sequelize.ValidationError) {
+  if (error instanceof mongoose.Error.ValidationError) {
     statusCode = 400;
     message = "Validation Error";
-    errors = error.errors.map(e => e.message);
-  } else if (error instanceof Sequelize.UniqueConstraintError) {
+    errors = Object.values(error.errors || {}).map((e) => e.message);
+  } else if (error instanceof mongoose.Error.CastError) {
+    statusCode = 400;
+    message = "Invalid Identifier";
+    errors = [`Invalid value for "${error.path}": ${error.value}`];
+  } else if (error?.name === "MongoServerError" && error?.code === 11000) {
     statusCode = 409;
     message = "Duplicate Entry";
-    errors = error.errors.map(e => e.message);
-  } else if (error instanceof Sequelize.ForeignKeyConstraintError) {
-    statusCode = 400;
-    message = "Foreign Key Constraint Error";
-    errors = [`Invalid reference: ${error.table}`];
-  } else if (error instanceof Sequelize.DatabaseError) {
-    statusCode = 500;
-    message = "Database Query Error";
-  } else if (error instanceof Sequelize.ConnectionError) {
+    const duplicateFields = Object.keys(error.keyPattern || {});
+    errors = duplicateFields.length
+      ? duplicateFields.map((field) => `${field} must be unique`)
+      : [error.message];
+  } else if (error?.name === "MongoNetworkError") {
     statusCode = 503;
     message = "Database Connection Error";
-  } else if (error instanceof Sequelize.TimeoutError) {
+  } else if (error?.name === "MongoServerSelectionError") {
+    statusCode = 503;
+    message = "Database Server Unavailable";
+  } else if (error?.name === "MongoTimeoutError") {
     statusCode = 504;
     message = "Database Timeout Error";
+  } else if (error instanceof mongoose.Error) {
+    statusCode = 500;
+    message = "Database Query Error";
   }
 
   return new ApiError(statusCode, message, errors, error.stack);
+}
+
+function isMongooseOrMongoError(error) {
+  return (
+    error instanceof mongoose.Error ||
+    error?.name === "MongoServerError" ||
+    error?.name === "MongoNetworkError" ||
+    error?.name === "MongoServerSelectionError" ||
+    error?.name === "MongoTimeoutError"
+  );
 }
 
 /**

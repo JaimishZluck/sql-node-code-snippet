@@ -1,15 +1,16 @@
-import { sequelize } from "./connection.db.js";
+import { mongoose } from "./connection.db.js";
 import models from "../models/index.js";
 import logger from "../logger/winston.logger.js";
+import config from "../config/env.config.js";
 
 const connectDB = async () => {
   try {
-    await sequelize.authenticate();
+    const dbNameOption = config.db.name ? { dbName: config.db.name } : {};
+    await mongoose.connect(config.db.uri, dbNameOption);
     void models;
-    // await sequelize.sync();
-    logger.info("Connection has been established successfully.");
+    logger.info("MongoDB connection established successfully.");
   } catch (error) {
-    logger.error("Unable to connect to the database:", { error: error?.message, stack: error?.stack });
+    logger.error("Unable to connect to MongoDB:", { error: error?.message, stack: error?.stack });
     throw error;
   }
 };

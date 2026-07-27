@@ -1,7 +1,9 @@
-Run migrations with Sequelize CLI:
+Run MongoDB seed scripts:
 
-- Apply latest migrations: npm run migrate
-- Roll back latest migration: npm run migrate:undo
-- Roll back all migrations: npm run migrate:undo:all
-- Create a migration: npm run migrate:create -- --name your-migration-name
-Config file path: `config/config.json` (Sequelize CLI default)
+- Seed admin user: `npm run db:seed-admin`
+- Remove seeded admin user: `npm run db:seed-admin:undo`
+
+MongoDB environment variables:
+
+- `MONGO_URI`
+- `MONGO_DB_NAME`

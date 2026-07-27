@@ -1,26 +1,14 @@
 {
   "development": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "127.0.0.1",
-    "dialect": "mssql",
-    "logging": false
+    "mongoUri": "mongodb://localhost:27017",
+    "dbName": "base_project"
   },
   "test": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "127.0.0.1",
-    "dialect": "mssql",
-    "logging": false
+    "mongoUri": "mongodb://localhost:27017",
+    "dbName": "base_project_test"
   },
   "production": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "127.0.0.1",
-    "dialect": "mssql",
-    "logging": false
+    "mongoUri": "",
+    "dbName": ""
   }
 }

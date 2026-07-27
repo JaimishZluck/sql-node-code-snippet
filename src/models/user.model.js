@@ -1,42 +1,30 @@
 import logger from "../logger/winston.logger.js";
+import mongoose from "mongoose";
 
-const UserModel = (sequelize, DataTypes) => {
-    logger.info("Initializing User model");
+logger.info("Initializing User model");
 
-    const User = sequelize.define(
-        "User",
-        {
-            id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-                primaryKey: true,
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            email: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                unique: true,
-            },
-        },
-        {
-            tableName: "users",
-            freezeTableName: true,
-            timestamps: true,
-            createdAt: "created_at",
-            updatedAt: "updated_at",
-        }
-    );
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+  },
+  {
+    collection: "users",
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+    versionKey: false,
+  }
+);
 
-    User.associate = (models) => {
-        User.hasMany(models.Order, {
-            foreignKey: "user_id",
-        });
-    };
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
-    return User;
-};
-
-export default UserModel;
+export default User;

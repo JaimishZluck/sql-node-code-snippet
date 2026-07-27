@@ -1,36 +1,23 @@
 import logger from "../logger/winston.logger.js";
+import mongoose from "mongoose";
 
-// Factory-style model definition to avoid circular dependencies
-const ExampleModel = (sequelize, DataTypes) => {
-    logger.info("Initializing Example model");
+logger.info("Initializing Example model");
 
-    const Example = sequelize.define(
-        "Example",
-        {
-            id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-                primaryKey: true,
-            },
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-        },
-        {
-            tableName: "examples",
-            freezeTableName: true,
-            timestamps: true,
-            createdAt: "created_at",
-            updatedAt: "updated_at",
-        }
-    );
+const exampleSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  {
+    collection: "examples",
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+    versionKey: false,
+  }
+);
 
-    Example.associate = (models) => {
-        // Define associations here when needed
-    };
+const Example = mongoose.models.Example || mongoose.model("Example", exampleSchema);
 
-    return Example;
-};
-
-export default ExampleModel;
+export default Example;
