@@ -1,4 +1,4 @@
-import { mongoose } from "./connection.db.js";
+import mongoose from "mongoose";
 import models from "../models/index.js";
 import logger from "../logger/winston.logger.js";
 import config from "../config/env.config.js";
