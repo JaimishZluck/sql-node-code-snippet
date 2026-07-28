@@ -13,6 +13,7 @@ const envSchema = Joi.object({
 
   MONGO_URI: Joi.string().uri().required(),
   MONGO_DB_NAME: Joi.string().allow("").optional(),
+  MONGO_POOL_SIZE: Joi.number().integer().min(1).default(10),
 
   JWT_SECRET: Joi.string().min(8).required(),
   JWT_EXPIRY: Joi.string().default("1d"),
@@ -48,6 +49,7 @@ const config = {
   db: {
     uri: env.MONGO_URI,
     name: env.MONGO_DB_NAME,
+    maxPoolSize: env.MONGO_POOL_SIZE,
   },
   jwt: {
     secret: env.JWT_SECRET,

@@ -16,17 +16,17 @@ const router = express.Router();
  */
 
 // Define your routes below
-// Example:
-router.route('/your-resource')
-    .post(
-        validate({ body: yourValidator }),
-        upload.any(),
-        yourController
-    )
-    .get(
-        validate({ query: queryValidator }),
-        yourController
-    );
+// Example (template — uncomment and wire up real controllers/validators):
+// router.route('/your-resource')
+//     .post(
+//         validate({ body: yourValidator }),
+//         upload.any(),
+//         yourController
+//     )
+//     .get(
+//         validate({ query: queryValidator }),
+//         yourController
+//     );
 
 router.get('/status', validate({ query: statusQueryValidator }), getStatus);
 
