@@ -50,6 +50,8 @@ const run = async () => {
 
   if (!query) {
     printList(lessons, "Available lessons (pick one):");
+    console.log("  17-api-patterns/  is a runnable Express API instead of lesson scripts:");
+    console.log("      npm run bootcamp:api\n");
     return;
   }
 
@@ -58,6 +60,26 @@ const run = async () => {
   const matches = lessons.filter((lesson) => lesson.startsWith(query));
 
   if (matches.length === 0) {
+    // A module may legitimately have no runnable lesson files — module 17 is
+    // a runnable Express API instead. Point at it rather than saying "no
+    // match", which would look like something is missing.
+    const moduleDirs = readdirSync(LESSONS_DIR)
+      .filter((entry) => statSync(path.join(LESSONS_DIR, entry)).isDirectory())
+      .sort();
+    const moduleMatch = moduleDirs.find((dir) => dir.startsWith(query));
+
+    if (moduleMatch) {
+      console.log(`\n  ${moduleMatch} has no runnable lesson scripts.\n`);
+      console.log(`  Read the chapter:  src/bootcamp/lessons/${moduleMatch}/README.md`);
+      if (moduleMatch.startsWith("17")) {
+        console.log("  Run the API:       npm run bootcamp:api");
+        console.log("  Then open:         http://localhost:4100\n");
+      } else {
+        console.log("");
+      }
+      return;
+    }
+
     printList(lessons, `No lesson matches "${query}". Available lessons:`);
     process.exitCode = 1;
     return;
