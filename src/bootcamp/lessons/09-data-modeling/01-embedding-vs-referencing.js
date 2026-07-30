@@ -118,15 +118,15 @@ await runLesson("Data modeling 1/3 — Embedding vs referencing", async () => {
   try {
     // ------------------------------------------------------------------
     section("1. Build the SAME blog data in two shapes");
-    // Three authors; Asha comments on BOTH posts — she is SHARED data, and
+    // Three authors; Prem comments on BOTH posts — she is SHARED data, and
     // that fact powers section 4.
     const base = Date.parse("2026-07-01T10:00:00Z");
     const minutes = (n) => new Date(base + n * 60_000);
     const rawComments = [
-      { post: POST_1, authorName: "Asha Rao", text: "Great checklist — the RAM advice saved me.", at: minutes(5) },
+      { post: POST_1, authorName: "Prem Rao", text: "Great checklist — the RAM advice saved me.", at: minutes(5) },
       { post: POST_1, authorName: "Vikram Shah", text: "Would add: check the keyboard before buying.", at: minutes(12) },
       { post: POST_1, authorName: "Meera Iyer", text: "Bought the Volt ProBook after reading this.", at: minutes(30) },
-      { post: POST_2, authorName: "Asha Rao", text: "Battery life claims are always optimistic.", at: minutes(45) },
+      { post: POST_2, authorName: "Prem Rao", text: "Battery life claims are always optimistic.", at: minutes(45) },
       { post: POST_2, authorName: "Vikram Shah", text: "Worth it for commutes, not for studios.", at: minutes(60) },
     ];
 
@@ -150,7 +150,7 @@ await runLesson("Data modeling 1/3 — Embedding vs referencing", async () => {
     // reference them) — the same insert-parents-first dance the seeder does
     // for categories -> products.
     const authors = await TmpAuthor.create([
-      { displayName: "Asha Rao" },
+      { displayName: "Prem Rao" },
       { displayName: "Vikram Shah" },
       { displayName: "Meera Iyer" },
     ]);
@@ -300,10 +300,10 @@ await runLesson("Data modeling 1/3 — Embedding vs referencing", async () => {
 
     // ------------------------------------------------------------------
     section("4. Problem 2 for embedding — updating SHARED data");
-    // Asha gets married and renames herself. Her display name exists as a
+    // Prem gets married and renames herself. Her display name exists as a
     // COPY inside every comment she ever wrote. How hard is the fix?
-    const OLD_NAME = "Asha Rao";
-    const NEW_NAME = "Asha Rao-Kapoor";
+    const OLD_NAME = "Prem Rao";
+    const NEW_NAME = "Prem Rao-Kapoor";
 
     // Design A: array surgery across EVERY post document that holds one of
     // her comments — arrayFilters targets the matching elements (module 08).

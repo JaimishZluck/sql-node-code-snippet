@@ -99,7 +99,7 @@ await runLesson("Validation, middleware, virtuals 3/3 — Virtuals", async () =>
   });
   const Plain = mongoose.models.LessonPlain
     ?? mongoose.model("LessonPlain", withoutOptIn, TEMP_COLLECTION);
-  const plain = new Plain({ first: "Asha", last: "Menon" });
+  const plain = new Plain({ first: "Prem", last: "Menon" });
 
   show("Default behaviour", {
     "doc.fullName (property access)": plain.fullName,

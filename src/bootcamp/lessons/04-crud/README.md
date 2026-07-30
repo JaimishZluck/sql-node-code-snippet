@@ -111,12 +111,12 @@ documents** when you passed an array. Array in → array out; one in → one out
 **Code example** — `01-create.js`, sections 1–3:
 
 ```js
-const asha = await User.create({
-  name: "  Asha Lessondemo  ",          // will be trimmed
-  email: "Asha.Creator@LESSON.TEST",    // will be lowercased
+const prem = await User.create({
+  name: "  Prem Lessondemo  ",          // will be trimmed
+  email: "Prem.Creator@LESSON.TEST",    // will be lowercased
   age: 28,
 });
-// asha.role === "customer" (default), asha.createdAt exists (timestamps)
+// prem.role === "customer" (default), prem.createdAt exists (timestamps)
 ```
 
 **Expected result** — the printed document shows trimmed/lowercased values,

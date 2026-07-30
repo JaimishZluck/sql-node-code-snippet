@@ -49,14 +49,14 @@ await runLesson("CRUD 1/4 — Creating documents", async () => {
     // MongoDB, Mongoose (in Node.js!) casts types, runs setters (trim,
     // lowercase...), fills defaults, and runs every validator. Only then is
     // ONE insertOne command sent to the server.
-    const asha = await User.create({
-      name: "  Asha Lessondemo  ", // extra spaces on purpose — watch `trim`
-      email: "Asha.Creator@LESSON.TEST", // uppercase on purpose — watch `lowercase`
+    const prem = await User.create({
+      name: "  Prem Lessondemo  ", // extra spaces on purpose — watch `trim`
+      email: "Prem.Creator@LESSON.TEST", // uppercase on purpose — watch `lowercase`
       age: 28,
       interests: ["reading", "yoga"],
       address: { street: "12 MG Road", city: "Pune", state: "Maharashtra", zip: "411001" },
     });
-    show("The document create() returned", asha.toObject());
+    show("The document create() returned", prem.toObject());
     note(
       "Things to spot: name was trimmed, email was lowercased (setters ran); " +
         "role/isActive/loyaltyPoints/deletedAt were filled from schema DEFAULTS; " +

@@ -195,7 +195,7 @@ five-way mapping in one line each:
 ```js
 const userSchema = new mongoose.Schema({ ... });   // Schema    (Node, config)
 const User = mongoose.model("User", userSchema);   // Model     (Node, class)
-const asha = new User({ name: "Asha" });           // Document  (Node, instance)
+const prem = new User({ name: "Prem" });           // Document  (Node, instance)
 // "users"                                         // Collection (server, storage)
 const q = User.find({ role: "admin" });            // Query     (Node, builder)
 const admins = await q;                            // ...executed + hydrated now
@@ -210,7 +210,7 @@ const admins = await q;                            // ...executed + hydrated now
 - Treating a Query like results: `const users = User.find()` without `await`
   gives you a builder, not an array. (Symptom: `users.map is not a function`.)
 - Calling document methods on the model (`User.save()`) or statics on a
-  document (`asha.find()`).
+  document (`prem.find()`).
 - Assuming a collection is created when you compile a model. It isn't —
   MongoDB creates collections lazily on the first insert (or index build).
 
@@ -233,7 +233,7 @@ const User = mongoose.model("User", userSchema);
 
 **What does "compile" mean here?** `mongoose.model(name, schema)` builds a
 brand-new class (extending Mongoose's internal `Model`), then walks the
-schema and wires everything in: a property accessor per path (so `asha.email`
+schema and wires everything in: a property accessor per path (so `prem.email`
 reads/writes tracked internal state, running getters/setters), the
 validators, the defaults, the virtuals, the middleware hooks, and any
 custom statics/methods you declared on the schema. The result is registered

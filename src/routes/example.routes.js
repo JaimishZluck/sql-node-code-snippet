@@ -3,6 +3,7 @@ import { getStatus, uploadFiles } from '../controllers/example.controller.js';
 import { validate } from '../middlewares/validation.middleware.js';
 import { statusQueryValidator } from '../validators/example.validator.js';
 import { upload } from '../middlewares/multer.middleware.js';
+import orderRouter from './order.routes.js';
 
 const router = express.Router();
 // Import your controllers, middlewares, and validators here
@@ -32,6 +33,9 @@ router.get('/status', validate({ query: statusQueryValidator }), getStatus);
 
 // File upload endpoint - accepts any number of files on any fields
 router.post('/upload', upload.any(), uploadFiles);
+
+// Mount order routes under /orders
+router.use('/orders', orderRouter);
 
 export default router;
 

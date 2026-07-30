@@ -149,7 +149,7 @@ data A and B (user & address, post & comments, product & category):
 
 ```js
 // user document — the address lives INSIDE
-{ name: "Asha", address: { street: "12 MG Road", city: "Pune", zip: "411001" } }
+{ name: "Prem", address: { street: "12 MG Road", city: "Pune", zip: "411001" } }
 ```
 
 - **REFERENCE** — store B in its own collection and keep only B's `_id` (or

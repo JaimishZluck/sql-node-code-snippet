@@ -33,7 +33,7 @@
 
 import logger from "../logger/winston.logger.js";
 import { ApiError } from "../utils/apierror.util.js";
-// import { YourModel } from "../models/example.model.js"; // Uncomment when you create your models
+import Example from "../models/example.model.js";
 import { createdata, updateData, fetchSingleData, findAllData, deleteData, startTransaction } from "../db/operations.db.js";
 
 /**
@@ -181,6 +181,46 @@ const removeItem = async (id, Model = null) => {
 };
 
 /**
+ * Example: Aggregation pipeline with a filter
+ * This shows how $match works like a filter before grouping the data.
+ */
+const getExampleNameSummary = async (filter = {}) => {
+  try {
+    logger.debug("getExampleNameSummary: Running aggregation pipeline");
+
+    const pipeline = [
+      {
+        $match: {
+          ...(filter.name ? { name: { $regex: filter.name, $options: "i" } } : {}),
+        },
+      },
+      {
+        $group: {
+          _id: "$name",
+          totalExamples: { $sum: 1 },
+          latestCreatedAt: { $max: "$createdAt" },
+        },
+      },
+      {
+        $sort: { totalExamples: -1 },
+      },
+      {
+        $project: {
+          _id: 0,
+          name: "$_id",
+          totalExamples: 1,
+          latestCreatedAt: 1,
+        },
+      },
+    ];
+
+    return await Example.aggregate(pipeline);
+  } catch (error) {
+    throw error instanceof ApiError ? error : new ApiError(500, "Aggregation failed", [error.message], error.stack);
+  }
+};
+
+/**
  * Example: Get service status
  */
 const getExampleStatus = async ({ includeUser, user }) => {
@@ -209,5 +249,6 @@ export {
   getItem,
   getAllItems,
   removeItem,
+  getExampleNameSummary,
   getExampleStatus
 };

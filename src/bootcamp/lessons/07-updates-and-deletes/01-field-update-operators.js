@@ -209,14 +209,14 @@ await runLesson("Updates & Deletes 1/4 — Field update operators", async () => 
     // mongoose.connection.db (same open connection, no Mongoose layer).
     const tmp = mongoose.connection.db.collection(TMP_COLLECTION);
     await tmp.insertMany([
-      { fullname: "Asha (v1 shape)", pts: 120 },
+      { fullname: "Prem (v1 shape)", pts: 120 },
       { fullname: "Binod (v1 shape)", pts: 40 },
     ]);
-    show("A v1 document BEFORE", await tmp.findOne({ fullname: "Asha (v1 shape)" }));
+    show("A v1 document BEFORE", await tmp.findOne({ fullname: "Prem (v1 shape)" }));
 
     const renamed = await tmp.updateMany({}, { $rename: { fullname: "name" } });
     show("updateMany + $rename result", renamed); // matched 2, modified 2
-    show("The same document AFTER", await tmp.findOne({ name: "Asha (v1 shape)" }));
+    show("The same document AFTER", await tmp.findOne({ name: "Prem (v1 shape)" }));
     note(
       "Internally $rename is a $unset of the old path plus a $set of the " +
         "new one — the field may move to the end of the document, and any " +

@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true, // Mongoose validation: reject save without a name
-      trim: true, // strip accidental spaces: "  Asha " -> "Asha"
+      trim: true, // strip accidental spaces: "  Prem " -> "Prem"
       minlength: 2,
       maxlength: 80,
     },

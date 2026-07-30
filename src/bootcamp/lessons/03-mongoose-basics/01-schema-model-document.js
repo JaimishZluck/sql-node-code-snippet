@@ -19,7 +19,7 @@ import User from "../../../models/user.model.js";
 
 // Temp-data marker: any user whose email ends in "@lesson.test" belongs to a
 // lesson and is safe to delete. Seeded users never match this pattern.
-const TEMP_EMAIL = "asha.demo@lesson.test";
+const TEMP_EMAIL = "prem.demo@lesson.test";
 const TEMP_EMAIL_PATTERN = /@lesson\.test$/;
 
 await runLesson("Schema → Model → Document (on the real User model)", async () => {
@@ -60,8 +60,8 @@ await runLesson("Schema → Model → Document (on the real User model)", async 
 
     // Calling the model as a constructor builds a document in memory.
     // This is a pure JavaScript operation — no network is involved yet.
-    const asha = new User({
-      name: "  Asha Demo  ", // extra spaces on purpose — watch `trim` remove them
+    const prem = new User({
+      name: "  Prem Demo  ", // extra spaces on purpose — watch `trim` remove them
       email: TEMP_EMAIL.toUpperCase(), // uppercase on purpose — watch `lowercase` fix it
       age: 29,
       interests: ["reading", "yoga"],
@@ -70,7 +70,7 @@ await runLesson("Schema → Model → Document (on the real User model)", async 
     // Surprise #1: the _id already exists. ObjectIds are generated
     // CLIENT-SIDE (4-byte timestamp + 5 random bytes + 3-byte counter), so
     // no server round-trip is needed to know a document's identity.
-    show("asha._id (no save has happened!)", asha._id);
+    show("prem._id (no save has happened!)", prem._id);
     note(
       "Client-side ObjectId generation is why you can wire documents together BEFORE saving " +
         "anything: order.user = user._id works even while both are still unsaved. A SQL " +
@@ -79,23 +79,23 @@ await runLesson("Schema → Model → Document (on the real User model)", async 
 
     // Surprise #2: setters (trim, lowercase) already ran during assignment —
     // not at save time.
-    show("asha.name  (trim setter already applied)", asha.name);
-    show("asha.email (lowercase setter already applied)", asha.email);
+    show("prem.name  (trim setter already applied)", prem.name);
+    show("prem.email (lowercase setter already applied)", prem.email);
 
     // Surprise #3: defaults are filled in immediately too.
-    show("asha.role (schema default)", asha.role);
-    show("asha.isActive (schema default)", asha.isActive);
+    show("prem.role (schema default)", prem.role);
+    show("prem.isActive (schema default)", prem.isActive);
 
     // isNew answers: "does Mongoose believe this document is not in the DB yet?"
-    show("asha.isNew", asha.isNew);
+    show("prem.isNew", prem.isNew);
 
     section("3. validate() — run every schema rule WITHOUT touching the database");
 
     // validate() checks required/enum/min/match/... entirely in Node. It is
     // async only because CUSTOM validators are allowed to be async — the
     // built-in rules involve no I/O at all.
-    await asha.validate();
-    note("No error thrown — asha satisfies every rule. The server was not contacted.");
+    await prem.validate();
+    note("No error thrown — prem satisfies every rule. The server was not contacted.");
 
     // Now a document that breaks several rules at once: no name (required),
     // a malformed email (match), and age 7 (min is 13).
@@ -117,12 +117,12 @@ await runLesson("Schema → Model → Document (on the real User model)", async 
     // save() = validate again + write. Because isNew is true, the write is an
     // insert: the driver encodes the document as BSON and sends it over a
     // pooled socket (see module 02).
-    await asha.save();
-    show("asha.isNew after save", asha.isNew);
+    await prem.save();
+    show("prem.isNew after save", prem.isNew);
 
     // `timestamps: true` in the schema maintained these automatically:
-    show("asha.createdAt", asha.createdAt);
-    show("asha.updatedAt", asha.updatedAt);
+    show("prem.createdAt", prem.createdAt);
+    show("prem.updatedAt", prem.updatedAt);
     note(
       "save() on a NEW document performs an insert. On an already-saved document it sends " +
         "ONLY the changed paths as a $set — Mongoose tracks modifications per field."
@@ -145,7 +145,7 @@ await runLesson("Schema → Model → Document (on the real User model)", async 
     // Casting demo: findById with a STRING. Mongoose casts it to an ObjectId
     // using the schema before sending — the server only ever sees real BSON
     // types. The raw driver would find NOTHING with a string here.
-    const idAsString = asha._id.toString();
+    const idAsString = prem._id.toString();
     const foundAgain = await User.findById(idAsString);
     show("found by string id?", foundAgain !== null);
     show("foundAgain.isNew (came from the DB)", foundAgain.isNew);
@@ -159,9 +159,9 @@ await runLesson("Schema → Model → Document (on the real User model)", async 
     section("6. Instance (document) methods vs static (model) methods");
 
     // Instance methods live on the DOCUMENT — they act on one record:
-    show("typeof asha.save", typeof asha.save);
-    show("typeof asha.validate", typeof asha.validate);
-    show("typeof asha.toObject", typeof asha.toObject);
+    show("typeof prem.save", typeof prem.save);
+    show("typeof prem.validate", typeof prem.validate);
+    show("typeof prem.toObject", typeof prem.toObject);
 
     // Statics live on the MODEL — they act on the whole collection:
     show("typeof User.find", typeof User.find);
@@ -169,21 +169,21 @@ await runLesson("Schema → Model → Document (on the real User model)", async 
 
     // ...and they do not cross over:
     show("typeof User.save (no such static)", typeof User.save);
-    show("typeof asha.find (no such instance method)", typeof asha.find);
+    show("typeof prem.find (no such instance method)", typeof prem.find);
     note(
       "Rule of thumb: if 'which document?' is already answered, use an instance method " +
-        "(asha.save()). If it still needs a filter to answer, use a model static (User.find(...))."
+        "(prem.save()). If it still needs a filter to answer, use a model static (User.find(...))."
     );
 
     section("7. toObject() — stepping down from Document to plain object");
 
-    const plain = asha.toObject();
+    const plain = prem.toObject();
     show("plain.constructor.name", plain.constructor.name); // "Object" — not a User
     show("typeof plain.save (methods are gone)", typeof plain.save);
     show("'isDeleted' in plain (virtuals are OFF by default)", "isDeleted" in plain);
 
     // Opting in to virtuals for this one conversion:
-    const withVirtuals = asha.toObject({ virtuals: true });
+    const withVirtuals = prem.toObject({ virtuals: true });
     show("withVirtuals.isDeleted", withVirtuals.isDeleted);
 
     note(
